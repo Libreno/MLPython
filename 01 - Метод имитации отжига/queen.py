@@ -3,7 +3,7 @@ import numpy as np
 
 import matplotlib.pyplot as pt
 
-N = 8
+N = 20
 
 Pos = []
 
@@ -51,62 +51,74 @@ def G(Pos):
 
 T0 = 100
 
-alpha = 0.95
-
-k = 0
-
-T = T0
-
-s = 10
-
-T = alpha * T
-
-L = 200
-
-t = []
-x = []
-Hx = []
-
-T0 = 100
-
 alpha = 0.98
 
 k = 0
 
 T = T0
 
+L = 200
+
+t = []
+x = []
+Hx = []
+TA = []
+E = []
+D = []
+
 s = Pos
 
-T = alpha * T
-
-L = 1000
+L = 10000
 
 for i in range(L):
 
     if H(s) == 0:
+        print("H(s) == 0")
         break
 
-    s_ = G(s)
-
-    Delta = H(s_) - H(s)
+    Hs = H(s)
+    s_ = G(s.copy())
+    Hs_ = H(s_)
+    Delta = Hs_ - Hs
+    D.append(Delta)
 
     if Delta < 0:
         s = s_
+        e = 0
+        print("s = {0}".format(s))
     else:
-        if np.random.uniform(0, 1) < np.exp(-Delta / T):
-            s_ = s
+        r = np.random.uniform(0, 1)
+        e = np.exp(-Delta / T)
+        if r < e:
+            print("s = {0} rnd".format(s))
+            s = s_
 
+    print("Hs = {0}, Hs_ = {1}, Delta = {2}, T = {5}, e = {6}".format(Hs, Hs_, Delta, s, s_, T, e))
+    
+    T = alpha * T
+    TA.append(T)
     t.append(i)
-    Hx.append(H(s))
+    Hx.append(Hs)
+    E.append(e)
 
 print("Найденный вариант = {0}; значение = {1}".format(s, H(s)))
 
+# график количества ферзей под боем
 pt.plot(t, Hx)
-
 pt.grid(True)
-
 pt.show()
 
+# график температуры
+pt.plot(t, TA)
+pt.grid(True)
+pt.show()
 
+# график Delta на каждой итерации
+pt.plot(t, D)
+pt.grid(True)
+pt.show()
 
-
+# график e - порога случайной величины из условия присваивания значения s
+pt.plot(t, E)
+pt.grid(True)
+pt.show()
