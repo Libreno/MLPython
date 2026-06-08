@@ -62,6 +62,7 @@ for l in range(L):
             Xmin[m] = X[m]
 
     XMinAll = CalcMinAll(Xmin)
+    print("Итерация {0}: X={1}, V={2}, Xmin={3}, XMinAll={4}".format(l, *X, V, Xmin, XMinAll))
 
 print("{0}\tЗначение = {1}".format(XMinAll, F(XMinAll)))
 
