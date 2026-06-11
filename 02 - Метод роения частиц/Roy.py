@@ -1,8 +1,7 @@
 #
-
 import numpy as np
-
 import matplotlib.pyplot as pt
+import matplotlib.animation as animation
 
 N = 2
 
@@ -50,9 +49,18 @@ for m in range(M):
 
     V.append(v)
 
+fig, ax = pt.subplots()
+ax.set_xlim(-100, 100)
+ax.set_ylim(-100, 100)
+
+xArr = list(map(lambda el: el[0], X))
+yArr = list(map(lambda el: el[1], X))
+pathCol = pt.scatter(xArr, yArr)
+
 XMinAll = CalcMinAll(Xmin)
 
-for l in range(L):
+def update(frame):
+    global XMinAll
     for m in range(M):
         V[m] = alpha * V[m] + beta * np.random.uniform() * (Xmin[m] - X[m]) + gamma * np.random.uniform() * (XMinAll - X[m])
 
@@ -61,8 +69,16 @@ for l in range(L):
         if F(X[m]) < F(Xmin[m]):
             Xmin[m] = X[m]
 
-    XMinAll = CalcMinAll(Xmin)
-    print("Итерация {0}: X={1}, V={2}, Xmin={3}, XMinAll={4}".format(l, *X, V, Xmin, XMinAll))
+        XMinAll = CalcMinAll(Xmin)
+
+        print(X[m])
+    pathCol.set_offsets(X)
+    print("Итерация {0}: X={1}, V={2}, Xmin={3}, XMinAll={4}".format(frame, *X, V, Xmin, XMinAll))
+    return (pathCol,)
+
+ani = animation.FuncAnimation(fig, update, frames=L, interval=1, repeat=False, blit=True)
+    
+pt.show()
 
 print("{0}\tЗначение = {1}".format(XMinAll, F(XMinAll)))
 
